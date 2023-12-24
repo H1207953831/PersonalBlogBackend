@@ -1,0 +1,4 @@
+djangorestframework==3.14.0
+djangorestframework_simplejwt==5.3.0
+fonttools==4.37.4
+setuptools==41.2.0
