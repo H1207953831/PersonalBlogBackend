@@ -65,20 +65,6 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
         'default': 'No more message here..',
     }
 
-    def create(self,validated_data):
-        category_id = validated_data.pop('category_id', None)
-        if category_id is not None:
-            try:
-                category_instance = Category.objects.get(id=category_id)
-            except Category.DoesNotExist:
-                category_instance = None
-
-            if category_instance is None:
-                category_text = str(category_id)
-                category_instance = Category.objects.create(title=category_text)
-
-            validated_data['category_id'] = category_instance.id
-        return super.create(validated_data)
 
     def check_obj_exists_or_fail(self, model, value, message='default'):
         if not self.default_error_messages.get(message, None):
