@@ -21,7 +21,7 @@ class RestrictedMiddleware(MiddlewareMixin):
             cache.set(ip, requests, timeout=60)
             if len(requests) > 20:
                 black_list.append(ip)
-                cache.set('blacklist',black_list,timeout=50)
+                cache.set('blacklist',black_list,timeout=3*60*60*24)
                 return HttpResponseForbidden('哦豁，大佬，访问太快，小黑屋3天哦~')
 
             if len(requests) > 10:
