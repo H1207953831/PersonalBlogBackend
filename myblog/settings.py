@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-smbu8*%g**l1j7jcdhr=ux4p&4qn#of4$()a$+8nm1*drt)%a1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -100,7 +100,6 @@ CACHES = {
         }
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
