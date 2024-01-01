@@ -19,12 +19,12 @@ class RestrictedMiddleware(MiddlewareMixin):
 
             requests.insert(0,time.time())
             cache.set(ip, requests, timeout=60)
-            if len(requests) > 20:
+            if len(requests) > 80:
                 black_list.append(ip)
                 cache.set('blacklist',black_list,timeout=3*60*60*24)
                 return HttpResponseForbidden('哦豁，大佬，访问太快，小黑屋3天哦~')
 
-            if len(requests) > 10:
+            if len(requests) > 40:
                 return HttpResponseForbidden(f'访问慢点，已经被警告了：再有{20-len(requests)}次就要被拉进去小黑屋了~')
 
 class TholltMiddleware(MiddlewareMixin):
