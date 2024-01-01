@@ -12,17 +12,16 @@ class RestrictedMiddleware(MiddlewareMixin):
             if ip in black_list:
                 return HttpResponseForbidden('大佬，别爬了::>_<::')
 
-            requests = cache.get('ip',[])
+            requests = cache.get(ip,[])
 
             while requests and time.time() - requests[-1] > 60:
                 requests.pop()
 
             requests.insert(0,time.time())
             cache.set(ip, requests, timeout=60)
-
             if len(requests) > 20:
                 black_list.append(ip)
-                cache.set('blacklist',black_list,timeout=3*60*60*24)
+                cache.set('blacklist',black_list,timeout=50)
                 return HttpResponseForbidden('哦豁，大佬，访问太快，小黑屋3天哦~')
 
             if len(requests) > 10:
