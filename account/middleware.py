@@ -7,7 +7,7 @@ class RestrictedMiddleware(MiddlewareMixin):
     def process_request(self, request):
         url = request.path
         if url.startswith('/api/'):
-            ip = request.META.get('REMOTE_ADDR')
+            ip = request.META.get('HTTP_X_REAL_IP')
             black_list = cache.get('blacklist',[])
             if ip in black_list:
                 return HttpResponseForbidden('大佬，别爬了::>_<::')

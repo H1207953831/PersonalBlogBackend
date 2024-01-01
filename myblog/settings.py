@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-smbu8*%g**l1j7jcdhr=ux4p&4qn#of4$()a$+8nm1*drt)%a1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -85,21 +85,11 @@ DATABASES = {
         'NAME': 'myblog',
         'USER': 'root',
         'PASSWORD': '8023love',
-        'HOST': '172.17.0.2',
-        'PORT': int(3306),
+        'HOST': '103.47.81.2',
+        'PORT': int(8023),
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://172.17.0.4:6380',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PASSWORD':'8023love',
-        }
-    }
-}
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
