@@ -4,7 +4,7 @@ from rest_framework import serializers
 from .models import CustomUser, VerifyEmail
 from django.utils import timezone
 from django.core.validators import RegexValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 phone_validator = RegexValidator(
     regex=r'^(1[3-9])\d{9}',
@@ -135,4 +135,17 @@ class CustomUserTokenSerializer(TokenObtainPairSerializer):
         del data['access']
         data['username'] = self.user.username
         data['email'] = self.user.email
+        return data
+
+
+class CustomUserTokenRefreshSerializer(TokenRefreshSerializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['token'] = data.get('access')
+        del data['access']
         return data

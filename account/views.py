@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import UserRegisterSerializer, UserDetailSerializer, VerifyCodeSerializer, UserDescSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .serializers import UserRegisterSerializer, UserDetailSerializer, VerifyCodeSerializer, UserDescSerializer, \
+    CustomUserTokenRefreshSerializer
 from .serializers import CustomUserTokenSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser
 from .permissions import IsSelfOrReadOnly
@@ -58,6 +59,9 @@ class CustomUserTokenPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
     serializer_class = CustomUserTokenSerializer
 
+class CustomUserTokenRefreshview(TokenRefreshView):
+    permission_classes = [AllowAny]
+    serializer_class = CustomUserTokenRefreshSerializer
 
 class CustomBackend(ModelBackend):
 
