@@ -7,7 +7,7 @@ class RestrictedMiddleware(MiddlewareMixin):
     def process_request(self, request):
         url = request.path
         if url.startswith('/api/'):
-            ip = request.META.get('HTTP_X_REAL_IP')
+            ip = request.META.get('HTTP_X_REAL_IP') if request.META.get('HTTP_X_REAL_IP') else request.META.get('REMOTE_ADDR')
             black_list = cache.get('blacklist',[])
             if ip in black_list:
                 return HttpResponseForbidden('大佬，别爬了::>_<::')
@@ -25,7 +25,7 @@ class RestrictedMiddleware(MiddlewareMixin):
                 return HttpResponseForbidden('哦豁，大佬，访问太快，小黑屋3天哦~')
 
             if len(requests) > 40:
-                return HttpResponseForbidden(f'访问慢点，已经被警告了：再有{20-len(requests)}次就要被拉进去小黑屋了~')
+                return HttpResponseForbidden(f'访问慢点，已经被警告了：再有{40-len(requests)}次就要被拉进去小黑屋了~')
 
 class TholltMiddleware(MiddlewareMixin):
     def process_request(self,request):
