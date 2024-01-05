@@ -86,18 +86,18 @@ DATABASES = {
         'NAME': 'myblog',
         'USER': 'root',
         'PASSWORD': '8023love',
-        'HOST': '172.17.0.2',
-        'PORT': int(3306),
+        'HOST': '103.47.81.2',
+        'PORT': int(8023),
     }
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://172.17.0.4:6380',
+        'LOCATION': 'redis://127.0.0.1:6379',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'PASSWORD':'8023love',
+            #'PASSWORD':'8023love',
         }
     }
 }
