@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'account.middleware.TholltMiddleware',
     'account.middleware.RestrictedMiddleware',
+    'article.middleware.SimpleCacheMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -164,3 +165,25 @@ EMAIL_HOST_PASSWORD = 'szvysbwlxkbpfiag'
 EMAIL_FROM = '1207953831@qq.com'
 
 AUTHENTICATION_BACKENDS = ('account.views.CustomBackend',)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

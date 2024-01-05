@@ -26,6 +26,10 @@ class RestrictedMiddleware(MiddlewareMixin):
 
             if len(requests) > 40:
                 return HttpResponseForbidden(f'访问慢点，已经被警告了：再有{40-len(requests)}次就要被拉进去小黑屋了~')
+        elif url.startswith('/admin/'):
+            pass
+        else:
+            return HttpResponseForbidden('Invalid request URL')
 
 class TholltMiddleware(MiddlewareMixin):
     def process_request(self,request):
@@ -47,4 +51,3 @@ class TholltMiddleware(MiddlewareMixin):
                 del connections[ip_address]
             cache.set('connections',connections)
         return response
-        pass

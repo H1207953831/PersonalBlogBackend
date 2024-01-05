@@ -112,7 +112,7 @@ class ArticleSerializer(ArticleBaseSerializer):
 
     def get_body_html(self, obj):
         pattern = r'^<p>(.*?)</p>'
-        result = re.match(pattern, obj.get_md()[0])
+        result = re.match(pattern, obj.get_md())
         if result:
             descriptions = result.group(0)
         else:
@@ -129,14 +129,10 @@ class ArticleDetailSerializer(ArticleBaseSerializer):
     id = serializers.IntegerField(read_only=True)
     comment = CommentSerializer(many=True, read_only=True)
     body_html = serializers.SerializerMethodField()
-    toc_html = serializers.SerializerMethodField()
 
     views = serializers.SerializerMethodField()
     def get_body_html(self, obj):
-        return obj.get_md()[0]
-
-    def get_toc_html(self, obj):
-        return obj.get_md()[1]
+        return obj.get_md()
 
     def get_views(self, obj):
         obj.views += 1

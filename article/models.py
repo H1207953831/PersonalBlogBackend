@@ -62,11 +62,10 @@ class Article(models.Model):
             extensions=[
                 'markdown.extensions.extra',
                 'markdown.extensions.codehilite',
-                'markdown.extensions.toc',
             ]
         )
         md_body = md.convert(str(self.body))
-        return md_body, md.toc
+        return md_body
 
     class Meta:
         ordering = ['-created']
