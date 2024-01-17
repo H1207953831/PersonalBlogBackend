@@ -1,32 +1,35 @@
+from rest_framework.generics import get_object_or_404
 from .models import Article, Category, Tag, Avatar
 from .serializers import ArticleSerializer, ArticleDetailSerializer, ArticleCategoryDetailSerializer
 from .serializers import CategoryDetailSerializer, CategorySerializer
 from .serializers import TagSerializer
 from .serializers import AvatarSerializer
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework import filters
 from .permissions import IsAdminOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Count
+from rest_framework import status
+from django.http import FileResponse
+from .utils import file_iterators
+from io import BytesIO
+from urllib.parse import quote
+
 
 # Create your views here.
 
 class Pagination(PageNumberPagination):
-    def get_paginated_response(self,data):
+    def get_paginated_response(self, data):
         return Response({
-            'count':self.page.paginator.count,
-            'next':self.get_next_link(),
-            'previous':self.get_previous_link(),
-            'total_pages':self.page.paginator.num_pages,
-            'current_page':self.page.number,
-            'results':data
+            'count': self.page.paginator.count,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'results': data
         })
-
-        pass
-    pass
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -79,6 +82,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def home(self):
         pass
+
     def get_serializer_class(self):
         if self.action in 'list':
             return ArticleSerializer
@@ -112,3 +116,19 @@ class AvatarViewSet(viewsets.ModelViewSet):
     queryset = Avatar.objects.all()
     serializer_class = AvatarSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+
+class ArticleDownloadViewSet(APIView):
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('article'):
+            article = get_object_or_404(Article, pk=request.GET.get('article'))
+            mem_file = BytesIO(article.body.encode('utf-8'))
+            file_name_encoded = quote((article.title + '.md').encode('utf-8'))
+            response = FileResponse(file_iterators(mem_file), as_attachment=True)
+            response['Content-Length'] = len(mem_file.getvalue())
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = "attachment;filename*=utf-8''{}".format(file_name_encoded)
+            return response
+        else:
+            return Response({"detail": "传递参数有误"},status=status.HTTP_404_NOT_FOUND)
