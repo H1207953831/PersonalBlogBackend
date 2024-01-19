@@ -96,9 +96,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         views_cache_key = f"article_{kwargs.get('pk')}_views"
         data = cache.get(article_cache_key, None)
         views = cache.get(views_cache_key, None)
-        old_task_id = cache.get(f'task_{kwargs.get("pk")}', None)
-        if old_task_id:
-            celery_app.control.revoke(old_task_id)
         if data is None or views is None:
             instance = self.get_object()
             instance.views += 1
@@ -109,8 +106,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         else:
             views += 1
         cache.set(views_cache_key, views, timeout=24 * 60 * 60)
-        task = save_views.apply_async((kwargs.get('pk'),), eta=timezone.now()+ timezone.timedelta(hours=23,minutes=59))
-        cache.set(f'task_{kwargs.get("pk")}', task.id, timeout=24 * 60 * 60)
         data['views'] = views
         return Response(data)
 
