@@ -19,8 +19,8 @@ import platform
 
 def mysystem():
     my_os = platform.system()
-    username = getpass.getuser()
-    return my_os == 'Linux' and username == 'huangzj'
+    #username = getpass.getuser()
+    return my_os == 'Linux'
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
