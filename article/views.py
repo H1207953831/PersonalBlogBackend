@@ -106,7 +106,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         else:
             views += 1
         cache.set(views_cache_key, views, timeout=24 * 60 * 60)
-        save_views.apply_async((kwargs.get('pk'),), eta=timezone.now()+ timezone.timedelta(hours=23,minutes=30))
+        save_views.apply_async((kwargs.get('pk'),), eta=timezone.now()+ timezone.timedelta(hours=23,minutes=59))
         data['views'] = views
         return Response(data)
 
