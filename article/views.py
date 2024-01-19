@@ -99,7 +99,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         old_task_id = cache.get(f'task_{kwargs.get("pk")}', None)
         if old_task_id:
             celery_app.control.revoke(old_task_id)
-            pass
         if data is None or views is None:
             instance = self.get_object()
             instance.views += 1

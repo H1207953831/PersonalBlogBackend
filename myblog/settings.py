@@ -217,5 +217,5 @@ LOGGING = {
 CELERY_TIMEZONE = "Asia/Shanghai"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' if mysystem() else 'redis://:8023love@172.17.0.4:6380/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0' if mysystem() else 'redis://:8023love@172.17.0.4:6380/0'
+CELERY_BROKER_URL = 'redis://:8023love@172.17.0.4:6380/0' if mysystem() else 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:8023love@172.17.0.4:6380/0' if mysystem() else 'redis://127.0.0.1:6379/0'
