@@ -57,15 +57,6 @@ class Article(models.Model):
     )
     views = models.IntegerField(default=0, verbose_name='浏览量')
 
-    def get_md(self):
-        md = Markdown(
-            extensions=[
-                'markdown.extensions.extra',
-                'markdown.extensions.codehilite',
-            ]
-        )
-        md_body = md.convert(str(self.body))
-        return md_body
 
     class Meta:
         ordering = ['-created']

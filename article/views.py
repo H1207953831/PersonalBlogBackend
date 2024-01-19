@@ -16,7 +16,9 @@ from django.http import FileResponse
 from .utils import file_iterators
 from io import BytesIO
 from urllib.parse import quote
-
+from django.core.cache import cache
+from .tasks import save_views
+from django.utils import timezone
 
 # Create your views here.
 
@@ -80,8 +82,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
         return Response(category_articles)
 
     @action(detail=False, methods=['get'])
-    def home(self):
-        pass
+    def test(self,request):
+        return Response({'message':'测试'})
 
     def get_serializer_class(self):
         if self.action in 'list':
@@ -89,6 +91,24 @@ class ArticleViewSet(viewsets.ModelViewSet):
         else:
             return ArticleDetailSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        article_cache_key = f"article_{kwargs.get('pk')}_key"
+        views_cache_key = f"article_{kwargs.get('pk')}_views"
+        data = cache.get(article_cache_key, None)
+        views = cache.get(views_cache_key, None)
+        if data is None or views is None:
+            instance = self.get_object()
+            instance.views += 1
+            views = max(instance.views,views) if views is not None else instance.views
+            serializer = self.get_serializer(instance)
+            data = serializer.data
+            cache.set(article_cache_key, data, timeout=24 * 60 * 60)
+        else:
+            views += 1
+        cache.set(views_cache_key, views, timeout=24 * 60 * 60)
+        save_views.apply_async((kwargs.get('pk'),), eta=timezone.now()+ timezone.timedelta(hours=23,minutes=30))
+        data['views'] = views
+        return Response(data)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -131,4 +151,4 @@ class ArticleDownloadViewSet(APIView):
             response['Content-Disposition'] = "attachment;filename*=utf-8''{}".format(file_name_encoded)
             return response
         else:
-            return Response({"detail": "传递参数有误"},status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "传递参数有误"}, status=status.HTTP_404_NOT_FOUND)

@@ -111,13 +111,7 @@ class ArticleSerializer(ArticleBaseSerializer):
     body_html = serializers.SerializerMethodField()
 
     def get_body_html(self, obj):
-        pattern = r'^<p>(.*?)</p>'
-        result = re.match(pattern, obj.get_md())
-        if result:
-            descriptions = result.group(0)
-        else:
-            descriptions = ''
-        return descriptions
+        return obj.body.split('# ')[0].replace('\n','')
 
     class Meta:
         model = Article
@@ -128,11 +122,8 @@ class ArticleSerializer(ArticleBaseSerializer):
 class ArticleDetailSerializer(ArticleBaseSerializer):
     id = serializers.IntegerField(read_only=True)
     comment = CommentSerializer(many=True, read_only=True)
-    body_html = serializers.SerializerMethodField()
 
     views = serializers.SerializerMethodField()
-    def get_body_html(self, obj):
-        return obj.get_md()
 
     def get_views(self, obj):
         obj.views += 1

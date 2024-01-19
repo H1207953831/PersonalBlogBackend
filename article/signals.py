@@ -21,5 +21,8 @@ def update_category_count(sender, instance, **kwargs):
         '/api/article/popular_articles/',
         f'/api/article/category_articles/?category={instance.category}'
     ]
+    views = cache.get(f"article_{instance.id}_views")
+    instance.views = views
+    instance.save()
     for cache_key in cache_keys:
         cache.delete(cache_key)

@@ -97,7 +97,7 @@ CACHES = {
         'LOCATION': 'redis://127.0.0.1:6379',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            #'PASSWORD':'8023love',
+            # 'PASSWORD':'8023love',
         }
     }
 }
@@ -136,7 +136,7 @@ USE_TZ = False
 
 STATIC_DIR = [os.path.join(BASE_DIR, 'frontend/dist/')]
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR,'collected_static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -166,7 +166,7 @@ EMAIL_FROM = '1207953831@qq.com'
 
 AUTHENTICATION_BACKENDS = ('account.views.CustomBackend',)
 
-
+# -------------------------LOG----------------------------- #
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -185,5 +185,18 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django_redis': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
     },
 }
+
+# -------------------------CELERY-------------------------- #
+
+CELERY_TIMEZONE = "Asia/Shanghai"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
