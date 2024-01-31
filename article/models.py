@@ -1,9 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from account.models import CustomUser
-from markdown import Markdown
-from django.urls import reverse
-import uuid
+
 
 
 # Create your models here.
@@ -56,7 +54,6 @@ class Article(models.Model):
         related_name='article'
     )
     views = models.IntegerField(default=0, verbose_name='浏览量')
-
 
     class Meta:
         ordering = ['-created']

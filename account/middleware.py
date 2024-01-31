@@ -6,7 +6,7 @@ from django.conf import settings
 class RestrictedMiddleware(MiddlewareMixin):
     def process_request(self, request):
         url = request.path
-        if url.startswith('/api/'):
+        if url.startswith('/api/') or url.startswith('/media/'):
             ip = request.META.get('HTTP_X_REAL_IP') if request.META.get('HTTP_X_REAL_IP') else request.META.get('REMOTE_ADDR')
             black_list = cache.get('blacklist',[])
             if ip in black_list:
@@ -37,13 +37,14 @@ class TholltMiddleware(MiddlewareMixin):
         connections = cache.get('connections',{})
         if sum(connections.values()) >= max_connections:
             return HttpResponseForbidden('超过最大连接数，请稍后再试~')
-        ip_address = request.META.get('REMOTE_ADDR')
-        current_connection = connections.get(ip_address,0)
-        connections[ip_address] = current_connection + 1
-        cache.set('connections',connections)
+        ip_address = request.META.get('REMOTE_ADDR',None)
+        if ip_address is None:
+            current_connection = connections.get(ip_address,0)
+            connections[ip_address] = current_connection + 1
+            cache.set('connections',connections)
 
     def process_response(self,request,response):
-        ip_address = request.META.get('REMOTE_ADDR')
+        ip_address = request.META.get('REMOTE_ADDR',None)
         connections = cache.get('connections',{})
         if ip_address in connections:
             connections[ip_address] -= 1

@@ -93,21 +93,35 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         article_cache_key = f"article_{kwargs.get('pk')}_key"
-        views_cache_key = f"article_{kwargs.get('pk')}_views"
         data = cache.get(article_cache_key, None)
-        views = cache.get(views_cache_key, None)
-        if data is None or views is None:
+        if data is None :
             instance = self.get_object()
             instance.views += 1
-            views = max(instance.views,views) if views is not None else instance.views
             serializer = self.get_serializer(instance)
             data = serializer.data
-            cache.set(article_cache_key, data, timeout=24 * 60 * 60)
         else:
-            views += 1
-        cache.set(views_cache_key, views, timeout=24 * 60 * 60)
-        data['views'] = views
+            data['views'] = str(int(data['views']) + 1)
+        cache.set(article_cache_key, data, timeout=24 * 60 * 60)
         return Response(data)
+
+    def update(self, request, *args, **kwargs):
+        article_cache_key = f"article_{kwargs.get('pk')}_key"
+        article_cache_views = cache.get(article_cache_key, None)['views']
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        request.data['views'] = article_cache_views
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+        cache.set(article_cache_key, serializer.data, timeout=24*60*60)
+        return Response(serializer.data)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

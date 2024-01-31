@@ -4,7 +4,6 @@ from celery.schedules import crontab
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myblog.settings')
-
 app = Celery('myblog')
 
 # Using a string here means the worker doesn't have to serialize

@@ -5,7 +5,7 @@ from comment.serializers import CommentSerializer
 import re
 
 class AvatarSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='article-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='avatar-detail')
 
     class Meta:
         model = Avatar
@@ -111,7 +111,7 @@ class ArticleSerializer(ArticleBaseSerializer):
     body_html = serializers.SerializerMethodField()
 
     def get_body_html(self, obj):
-        return obj.body.split('# ')[0].replace('\n','')
+        return obj.body.split('\n')[0].replace('`','')
 
     class Meta:
         model = Article

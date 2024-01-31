@@ -34,6 +34,7 @@ class VerifyCodeSerializer(serializers.ModelSerializer):
 
 
 class UserDescSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'last_login', 'date_joined']

@@ -92,3 +92,11 @@ def generate_verify_code(request):
                 return Response({'msg': '验证码已发送'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def test_user(request):
+    instance = CustomUser.objects.get(pk=1)
+    serializer = UserDescSerializer(instance)
+    return Response(serializer.data)

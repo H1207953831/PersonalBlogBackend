@@ -21,6 +21,7 @@ from django.urls import path, include
 from account.views import *
 from article.views import *
 from comment.views import *
+from product.views import *
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView, TokenObtainPairView
 
@@ -31,6 +32,8 @@ router.register(r'tag', TagViewSet)
 router.register(r'avatar', AvatarViewSet)
 router.register(r'comment',CommentViewSet)
 router.register(r'user',UserViewSet)
+router.register(r'product',ProductionViewSet)
+router.register(r'file', FilesViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,6 +42,8 @@ urlpatterns = [
     path('api/token/refresh/', CustomUserTokenRefreshview.as_view(), name='token_refresh'),
     path('api/generate_verify_code/',generate_verify_code,name='generate_verify_code'),
     path('api/download/',ArticleDownloadViewSet.as_view(), name='download'),
+    path('api/test/',BuyProduct.as_view(), name='test'),
+    path('api/test_user/', test_user,name='test_user'),
 ]
 
 if settings.DEBUG:

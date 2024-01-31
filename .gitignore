@@ -1,3 +1,4 @@
 *.pyc
 myblog/settings.py
 media/test/*
+product
