@@ -20,6 +20,7 @@ from django.core.cache import cache
 from .tasks import save_views
 from django.utils import timezone
 from myblog import celery_app
+from datetime import datetime, timedelta
 # Create your views here.
 
 class Pagination(PageNumberPagination):
@@ -102,6 +103,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         else:
             data['views'] = str(int(data['views']) + 1)
         cache.set(article_cache_key, data, timeout=24 * 60 * 60)
+        save_views.apply_async((kwargs.get('pk'),), eta=datetime.utcnow() + timedelta(minutes=3))
         return Response(data)
 
     def update(self, request, *args, **kwargs):
