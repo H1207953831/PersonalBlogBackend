@@ -5,7 +5,7 @@ from .models import CustomUser, VerifyEmail
 from django.utils import timezone
 from django.core.validators import RegexValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-
+from rest_framework_simplejwt.exceptions import TokenError
 phone_validator = RegexValidator(
     regex=r'^(1[3-9])\d{9}',
     message='非法号码。'
@@ -136,6 +136,7 @@ class CustomUserTokenSerializer(TokenObtainPairSerializer):
         del data['access']
         data['username'] = self.user.username
         data['email'] = self.user.email
+        data['is_superuser'] = self.user.is_superuser
         return data
 
 
@@ -146,7 +147,10 @@ class CustomUserTokenRefreshSerializer(TokenRefreshSerializer):
     def update(self, instance, validated_data):
         pass
     def validate(self, attrs):
-        data = super().validate(attrs)
+        try:
+            data = super().validate(attrs)
+        except TokenError:
+            return {'status':'expired'}
         data['token'] = data.get('access')
         del data['access']
         return data

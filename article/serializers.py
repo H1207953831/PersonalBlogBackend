@@ -1,7 +1,8 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 from .models import Article, Category, Tag, Avatar
 from account.serializers import UserDescSerializer
 from comment.serializers import CommentSerializer
+from rest_framework.response import Response
 import re
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -44,7 +45,7 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
     author = UserDescSerializer(read_only=True)
     category = CategorySerializer(read_only=True)
-    category_id = serializers.IntegerField(write_only=True, allow_null=True, required=False)
+    category_det = serializers.CharField(write_only=True, allow_null=True, required=False)
     tags = serializers.SlugRelatedField(
         queryset=Tag.objects.all(),
         many=True,
@@ -73,9 +74,7 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
         if not model.objects.filter(value=value).exists() and value is not None:
             self.fail(message, value=value)
 
-    def validate_category_id(self, value):
-        if not Category.objects.filter(id=value).exists() and value is not None:
-            return serializers.ValidationError('Category with id {] is not exits.'.format(value))
+    def validate_category_det(self, value):
         return value
 
     def to_internal_value(self, data):
@@ -85,6 +84,37 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
                 if not Tag.objects.filter(text=text).exists():
                     Tag.objects.create(text=text)
         return super().to_internal_value(data)
+
+    def _get_category(self, validated_data):
+        category_detail = validated_data.pop('category_det', None)
+        if category_detail is None:
+            return None
+        try:
+            if category_detail.isdigit():
+                return Category.objects.get(id=category_detail)
+            else:
+                return Category.objects.get_or_create(title=category_detail)[0]
+        except Category.DoesNotExist:
+            raise serializers.ValidationError('Category not found.')
+
+    def validate(self, attrs):
+        allow_fields = ['category_det','tags','title','body']
+        for key in attrs.keys():
+            if key not in  allow_fields:
+                raise serializers.ValidationError(f"字段 {key} 不是允许的字段。")
+        return attrs
+
+    def create(self, validated_data):
+        category = self._get_category(validated_data)
+        if category:
+            validated_data['category'] = category
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        category = self._get_category(validated_data)
+        if category:
+            validated_data['category'] = category
+        return super().update(instance, validated_data)
 
 
 class ArticleCategoryDetailSerializer(serializers.ModelSerializer):
