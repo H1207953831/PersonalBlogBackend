@@ -8,7 +8,6 @@ from .models import ShangPin, File
 from rest_framework.response import Response
 from myblog import celery_app as celery
 from .tasks import updata2database, delete_database
-from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import FileResponse
 

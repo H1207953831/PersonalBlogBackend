@@ -2,7 +2,6 @@ from rest_framework import serializers, status
 from .models import Article, Category, Tag, Avatar
 from account.serializers import UserDescSerializer
 from comment.serializers import CommentSerializer
-from rest_framework.response import Response
 import re
 
 class AvatarSerializer(serializers.ModelSerializer):
@@ -96,13 +95,6 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
                 return Category.objects.get_or_create(title=category_detail)[0]
         except Category.DoesNotExist:
             raise serializers.ValidationError('Category not found.')
-
-    def validate(self, attrs):
-        allow_fields = ['category_det','tags','title','body']
-        for key in attrs.keys():
-            if key not in  allow_fields:
-                raise serializers.ValidationError(f"字段 {key} 不是允许的字段。")
-        return attrs
 
     def create(self, validated_data):
         category = self._get_category(validated_data)

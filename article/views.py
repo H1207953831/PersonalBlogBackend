@@ -124,6 +124,15 @@ class ArticleViewSet(viewsets.ModelViewSet):
         cache.set(article_cache_key, serializer.data, timeout=24*60*60)
         return Response(serializer.data)
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        article_cache_key = f"article_{serializer.data['id']}_key"
+        cache.set(article_cache_key, serializer.data, timeout=24*60*60)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

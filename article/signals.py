@@ -1,16 +1,14 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Article, Category
 from django.core.cache import cache
+from .models import Article
+from .tasks import count_category,reflash_cache
 
 @receiver(post_save, sender=Article)
 @receiver(post_delete, sender=Article)
 def update_category_count(sender, instance, **kwargs):
     # 统计每个 Category 下的文章数量
-    categories = Category.objects.all()
-    for category in categories:
-        category.article_count = Article.objects.filter(category=category).count()
-        category.save()
+    count_category.apply_async()
 
     cache_keys = [
         '/api/category/',
@@ -23,3 +21,4 @@ def update_category_count(sender, instance, **kwargs):
     ]
     for cache_key in cache_keys:
         cache.delete(cache_key)
+    reflash_cache.apply_async(countdown=5)
