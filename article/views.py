@@ -138,14 +138,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminOrReadOnly]
-
-    pagination_class = None
+    pagination_class = Pagination
+    page_size = 10
 
     def get_serializer_class(self):
         if self.action == 'list':
             return CategorySerializer
         else:
             return CategoryDetailSerializer
+
 
 
 class TagViewSet(viewsets.ModelViewSet):

@@ -4,6 +4,7 @@ from account.serializers import UserDescSerializer
 from comment.serializers import CommentSerializer
 import re
 
+
 class AvatarSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='avatar-detail')
 
@@ -34,6 +35,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='category-detail')
+
     class Meta:
         model = Category
         fields = '__all__'
@@ -64,7 +66,6 @@ class ArticleBaseSerializer(serializers.HyperlinkedModelSerializer):
         'incorrect_category_id': 'Category with id {value} not exists.',
         'default': 'No more message here..',
     }
-
 
     def check_obj_exists_or_fail(self, model, value, message='default'):
         if not self.default_error_messages.get(message, None):
@@ -115,7 +116,7 @@ class ArticleCategoryDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = [
-            'url','id', 'title'
+            'url', 'id', 'title',
         ]
 
 
@@ -130,10 +131,10 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(ArticleBaseSerializer):
-    body_html = serializers.SerializerMethodField()
+    paragraph = serializers.SerializerMethodField()
 
-    def get_body_html(self, obj):
-        return obj.body.split('\n')[0].replace('`','')
+    def get_paragraph(self, obj):
+        return obj.body.split('\n')[0]
 
     class Meta:
         model = Article
