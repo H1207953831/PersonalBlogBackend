@@ -94,8 +94,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'myblog',
         'USER': 'root',
-        'PASSWORD': '8023love',
-        'HOST': '103.47.81.2',
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': int(8023),
     }
 }
@@ -180,8 +180,8 @@ AUTH_USER_MODEL = 'account.CustomUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = '1207953831@qq.com'
-EMAIL_HOST_PASSWORD = 'szvysbwlxkbpfiag'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_FROM = '1207953831@qq.com'
 
 AUTHENTICATION_BACKENDS = ('account.views.CustomBackend',)
